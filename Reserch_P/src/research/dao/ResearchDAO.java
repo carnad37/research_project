@@ -200,28 +200,28 @@ public class ResearchDAO {
 		return retval;
 	}
 	
-	public int addAnswerColumn(Research research, int maxAnum) {
-		int retval = 0;
-		int researchID = research.getResearch_id();
-		int lastAnum = research.getMax_anum();
-		Connection conn = null;
-		Statement stmt = null;
-		try {
-			conn = getConnection();
-			stmt = conn.createStatement();
-			for (int i = lastAnum + 1; i <= maxAnum; i++) {
-				String SQL = "ALTER TABLE research_" + researchID + " ADD " + i + "_ans VARCHAR(50) NULL";
-				retval = stmt.executeUpdate(SQL);
-				System.out.println("add query : " + retval);
-			}
-		} catch (SQLException e) {
-			e.printStackTrace();
-		} finally {
-			if (stmt != null) try {stmt.close();} catch (SQLException e) {}
-			if (conn != null) try {conn.close();} catch (SQLException e) {}
-		}
-		return retval;
-	}
+//	public int addAnswerColumn(Research research, int maxAnum) {
+//		int retval = 0;
+//		int researchID = research.getResearch_id();
+//		int lastAnum = research.getMax_anum();
+//		Connection conn = null;
+//		Statement stmt = null;
+//		try {
+//			conn = getConnection();
+//			stmt = conn.createStatement();
+//			for (int i = lastAnum + 1; i <= maxAnum; i++) {
+//				String SQL = "ALTER TABLE research_" + researchID + " ADD " + i + "_ans VARCHAR(50) NULL";
+//				retval = stmt.executeUpdate(SQL);
+//				System.out.println("add query : " + retval);
+//			}
+//		} catch (SQLException e) {
+//			e.printStackTrace();
+//		} finally {
+//			if (stmt != null) try {stmt.close();} catch (SQLException e) {}
+//			if (conn != null) try {conn.close();} catch (SQLException e) {}
+//		}
+//		return retval;
+//	}
 	
 	//=====================Query	
 	

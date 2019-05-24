@@ -33,7 +33,6 @@ public class AnswerCommand implements ResearchCommand {
 		String questioin = (String)session.getAttribute("question");
 		int maxAnum = (Integer)session.getAttribute("max_anum");
 		if (maxAnum > research.getMax_anum()) {
-			dao.addAnswerColumn(research, maxAnum);
 			research.setMax_anum(maxAnum);
 		}
 		System.out.println("maxAnum : " + research.getMax_anum());
@@ -58,8 +57,8 @@ public class AnswerCommand implements ResearchCommand {
 			System.out.println("QCOUNT : " + qCount);
 			if (qCount > research.getMax_qnum()) {
 				retval = dao.completeRegistration(research.getResearch_id(), research.getMax_anum());
-				SQL = makeResultTableSQL(research.getResearch_id(), research.getMax_qnum());
-				dao.createTableToDB(SQL);
+//				SQL = makeResultTableSQL(research.getResearch_id(), research.getMax_qnum());
+//				dao.createTableToDB(SQL);
 				session.setAttribute("result", retval);
 				viewPage = "research_result.jsp";
 			}
@@ -83,11 +82,4 @@ public class AnswerCommand implements ResearchCommand {
 		return startSQL + endSQL;
 	}
 	
-	private String makeResultTableSQL(int research_id, int maxQuestionNumber) {
-		String SQL = "create table " + "research_" + research_id + "_result (pid int(10) primary key Auto_increment, sex varchar(6) not null, age int(2) not null, job varchar(20) not null";
-		for (int i = 1; i <= maxQuestionNumber; i++) {
-			SQL += ", " + i + "_qus int(3) null";
-		}
-		return SQL + ")";
-	}
 }

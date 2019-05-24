@@ -50,8 +50,11 @@ public class CreateCommand implements ResearchCommand {
 	}
 	
 	private String makeCreateTableSQL(int research_id) {
-		String SQL = "create table " + "research_" + research_id + " ( qid int(3) primary key Auto_increment, question varchar(100) not null, 1_ans varchar(50) null)";
-		return SQL;
+		String SQL = "create table " + "research_" + research_id + " ( qid int(3) primary key Auto_increment, question varchar(100) not null, 1_ans varchar(50) null";
+		for (int i = 1; i < 100; i++) {
+			SQL += ", " + (i + 1) + "_ans VARCHAR(50) NULL";
+		}
+		return SQL + ")";
 	}
 
 }
