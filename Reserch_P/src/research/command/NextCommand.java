@@ -1,6 +1,7 @@
 package research.command;
 
 import java.io.IOException;
+import java.sql.Connection;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -28,18 +29,19 @@ public class NextCommand implements ResearchCommand {
 			if (session.getAttribute("error") != null) {
 				session.removeAttribute("error");
 			}
+			ResearchDAO dao = new ResearchDAO();			
 			Research research = (Research)session.getAttribute("research");
 			int qCount = Integer.parseInt(request.getParameter("qCount"));
 			Person person = (Person)session.getAttribute("person");
 			qCount++;
 			int answer = Integer.parseInt(answerStr);
+			Connection conn = (Connection)session.getAttribute("connection");
+			dao.joinResearchAnswer(conn, person, qCount, SQL);
 			person.saveAnswerArray(qCount - 2, answer);
 			session.setAttribute("qCount", qCount);
-
 			if (research.getMax_qnum() < qCount) {
 				viewPage = "research_result.jsp";
 				String SQL = makeSQL(research);
-				ResearchDAO dao = new ResearchDAO();			
 				dao.joinResearch(person, SQL);
 				session.setAttribute("function", "JOIN_RESEARCH");	
 			}		
@@ -48,14 +50,19 @@ public class NextCommand implements ResearchCommand {
 	}
 	
 	public String makeSQL(Research research) {
-		String SQL = "INSERT INTO research_" + research.getResearch_id() + "_result(sex, age, job";
+		String SQL = "INSERT INTO research_result(research_id, sex, age, job";
 		for (int i = 1; i <= research.getMax_qnum(); i++) {
 			SQL += ", " + i + "_qus"; 
 		}
-		SQL += ") VALUES (?, ?, ?";
+		SQL += ") VALUES (" + research.getResearch_id() + ", ?, ?, ?";
 		for (int i = 1; i <= research.getMax_qnum(); i++) {
 			SQL += ", ?"; 
 		}
 		return SQL + ")";
+	}
+	
+	public String makeUpdateAnswerSQL(int targetNum) {
+		String SQL = "UPDATE SET " + targetNum + "_qus = ? WHERE pid = LAST_INSERT_ID()";
+
 	}
 }

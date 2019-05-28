@@ -19,7 +19,7 @@ public class RunCommand implements ResearchCommand {
 		Person person = null;
 		HttpSession session = request.getSession();
 		int qCount = Integer.parseInt(request.getParameter("qCount"));
-	
+
 		//조사대상자의 객체를 만든다.
 		person = new Person();
 		session.setAttribute("person", person);

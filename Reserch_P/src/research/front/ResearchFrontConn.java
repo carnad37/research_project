@@ -12,6 +12,7 @@ import javax.servlet.http.HttpServletResponse;
 import research.command.AnswerCommand;
 import research.command.BackupCommand;
 import research.command.BeforeCommand;
+import research.command.CommitCommand;
 import research.command.CreateCommand;
 import research.command.DeleteCommand;
 import research.command.NextCommand;
@@ -100,7 +101,9 @@ public class ResearchFrontConn extends HttpServlet {
 		} else if (action.equals("before.do")) {
 			command = new BeforeCommand();
 			viewPage = command.execute(request, response);
-			
+		} else if (action.equals("controlcommit.do")) {
+			command = new CommitCommand();
+			viewPage = command.execute(request, response);
 		} else if (action.equals("pInfo_view.do")) {
 			viewPage = "research_pInfo.jsp";
 		} else if (action.equals("pInfo.do")) {

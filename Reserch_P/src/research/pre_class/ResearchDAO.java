@@ -1,4 +1,4 @@
-package research.dao;
+package research.pre_class;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -187,7 +187,7 @@ public class ResearchDAO {
 		return retval;
 	}
 
-	public Connection joinResearch(Person person, String SQL) {
+	public int joinResearch(Person person, String SQL) {
 		int retval = 0;
 		Connection conn = null;
 		PreparedStatement pstmt = null;
@@ -200,45 +200,28 @@ public class ResearchDAO {
 			pstmt.setInt(count, person.getAge());
 			count++;
 			pstmt.setString(count, person.getJob());
-//			int[] questionArray = person.getAnswerArray();
-//			for (int question : questionArray) {
-//				count++;
-//				pstmt.setInt(count, question);
-//			}
+			int[] questionArray = person.getAnswerArray();
+			for (int question : questionArray) {
+				count++;
+				pstmt.setInt(count, question);
+			}
 			retval = pstmt.executeUpdate();
 			if (retval != 1) {
-				System.out.println("DB : personData update fail");
+				conn.rollback();
+				System.out.println("DB : rollback");
 			} else {
-				System.out.println("DB : personData update sucess");
+				conn.commit();
+				System.out.println("DB : commit");
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
 		} finally {
 			if (pstmt != null) try {pstmt.close();} catch (SQLException e) {}
+			if (conn != null) try {conn.close();} catch (SQLException e) {}
 		}
-		return conn;
+		return retval;
 	}
 	
-	public void joinResearchAnswer(Connection conn, Person person, int target, ) {
-		int retval = 0;
-		PreparedStatement pstmt = null;
-		String SQL = "UPDATE SET ";
-		try {
-			pstmt = conn.prepareStatement(SQL);
-			int[] questionArray = person.getAnswerArray();
-			pstmt.setInt(1, questionArray[target]);
-			retval = pstmt.executeUpdate();
-			if (retval != 1) {
-				System.out.println("DB : answer update fail");
-			} else {
-				System.out.println("DB : answer update sucess");
-			}
-		} catch (SQLException e) {
-			e.printStackTrace();
-		} finally {
-			if (pstmt != null) try {pstmt.close();} catch (SQLException e) {}
-		}
-	}
 //	public int addAnswerColumn(Research research, int maxAnum) {
 //		int retval = 0;
 //		int researchID = research.getResearch_id();

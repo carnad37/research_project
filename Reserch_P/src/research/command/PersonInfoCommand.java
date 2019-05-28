@@ -1,12 +1,14 @@
 package research.command;
 
 import java.io.IOException;
+import java.sql.Connection;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import research.dao.ResearchDAO;
 import research.main.Person;
 import research.main.Research;
 
@@ -34,7 +36,16 @@ public class PersonInfoCommand implements ResearchCommand {
 		
 		session.setAttribute("person", person);
 		session.setAttribute("qCount", 1);
+		
+		ResearchDAO dao = new ResearchDAO();
+		String SQL = makePInfoSQL(person, research.getResearch_id());
+		Connection conn = dao.joinResearch(person, SQL);
+		session.setAttribute("connection", conn);
+		
 		return viewPage;
 	}
-
+	
+	private String makePInfoSQL(Person person, int research_id) {
+		return "INSERT INTO research_result(research_id, sex, age,job) VALUES ("+research_id + ", " + person.getSex() + ", " + person.getAge() + ", " + person.getJob() + ")";
+	}
 }
