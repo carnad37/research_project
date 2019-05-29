@@ -12,7 +12,7 @@ import javax.servlet.http.HttpServletResponse;
 import research.command.AnswerCommand;
 import research.command.BackupCommand;
 import research.command.BeforeCommand;
-import research.command.CommitCommand;
+import research.command.RollbackCommand;
 import research.command.CreateCommand;
 import research.command.DeleteCommand;
 import research.command.NextCommand;
@@ -21,7 +21,6 @@ import research.command.PersonInfoCommand;
 import research.command.QuestionCommand;
 import research.command.ReadyCommand;
 import research.command.ResearchCommand;
-import research.command.RunCommand;
 
 
 /**
@@ -101,8 +100,8 @@ public class ResearchFrontConn extends HttpServlet {
 		} else if (action.equals("before.do")) {
 			command = new BeforeCommand();
 			viewPage = command.execute(request, response);
-		} else if (action.equals("controlcommit.do")) {
-			command = new CommitCommand();
+		} else if (action.equals("rollback.do")) {
+			command = new RollbackCommand();
 			viewPage = command.execute(request, response);
 		} else if (action.equals("pInfo_view.do")) {
 			viewPage = "research_pInfo.jsp";

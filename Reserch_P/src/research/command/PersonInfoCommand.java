@@ -46,6 +46,6 @@ public class PersonInfoCommand implements ResearchCommand {
 	}
 	
 	private String makePInfoSQL(Person person, int research_id) {
-		return "INSERT INTO research_result(research_id, sex, age,job) VALUES ("+research_id + ", " + person.getSex() + ", " + person.getAge() + ", " + person.getJob() + ")";
+		return "INSERT INTO research_result(research_id, sex, age,job) VALUES (" + research_id + ", ?, ?, ?)";	
 	}
 }

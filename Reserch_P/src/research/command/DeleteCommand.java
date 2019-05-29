@@ -19,7 +19,7 @@ public class DeleteCommand implements ResearchCommand {
 		ResearchDAO dao = new ResearchDAO();
 		String delInfo = makeDeleteResearchSQL(targetID);
 		String dropTalbe = makeDropResearchSQL(targetID);
-		String dropResult = makeDropResultSQL(targetID);
+		String dropResult = makeDeleteResultSQL(targetID);
 		dao.deleteToDB(delInfo, dropTalbe, dropResult);
 		
 		return viewPage;
@@ -42,11 +42,12 @@ public class DeleteCommand implements ResearchCommand {
 		}
 		return SQL;
 	}
-	private String makeDropResultSQL(String[] targetID) {
-		String SQL = "DROP TABLE research_" + targetID[0] + "_result";
+
+	private String makeDeleteResultSQL(String[] targetID) {
+		String SQL = "DELETE FROM research_result WHERE research_id = "+ targetID[0];
 		if (targetID.length > 1) {
 			for (int i = 1; i < targetID.length; i++) {
-				SQL += ", research_" + targetID[i] + "_result";
+				SQL += " OR research_id = " + targetID[i];
 			}
 		}
 		return SQL;

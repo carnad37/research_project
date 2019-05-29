@@ -30,39 +30,31 @@ public class NextCommand implements ResearchCommand {
 				session.removeAttribute("error");
 			}
 			ResearchDAO dao = new ResearchDAO();			
-			Research research = (Research)session.getAttribute("research");
-			int qCount = Integer.parseInt(request.getParameter("qCount"));
-			Person person = (Person)session.getAttribute("person");
-			qCount++;
-			int answer = Integer.parseInt(answerStr);
 			Connection conn = (Connection)session.getAttribute("connection");
-			dao.joinResearchAnswer(conn, person, qCount, SQL);
-			person.saveAnswerArray(qCount - 2, answer);
+			Research research = (Research)session.getAttribute("research");
+			Person person = (Person)session.getAttribute("person");
+
+			int qCount = Integer.parseInt(request.getParameter("qCount"));
+			int answer = Integer.parseInt(answerStr);
+			String SQL = makeUpdateAnswerSQL(qCount);			
+			person.saveAnswerArray(qCount - 1, answer);	//1¿∫ 1∫Œ≈Õ Ω√¿€«ÿº≠ ª©¡‹.
+			dao.joinResearchAnswer(conn, answer, SQL);
+
+			qCount++;
 			session.setAttribute("qCount", qCount);
 			if (research.getMax_qnum() < qCount) {
+				dao.updateCommit(conn);
+				session.setAttribute("function", "JOIN_RESEARCH");
 				viewPage = "research_result.jsp";
-				String SQL = makeSQL(research);
-				dao.joinResearch(person, SQL);
-				session.setAttribute("function", "JOIN_RESEARCH");	
 			}		
 		}		
 		return viewPage;
 	}
-	
-	public String makeSQL(Research research) {
-		String SQL = "INSERT INTO research_result(research_id, sex, age, job";
-		for (int i = 1; i <= research.getMax_qnum(); i++) {
-			SQL += ", " + i + "_qus"; 
-		}
-		SQL += ") VALUES (" + research.getResearch_id() + ", ?, ?, ?";
-		for (int i = 1; i <= research.getMax_qnum(); i++) {
-			SQL += ", ?"; 
-		}
-		return SQL + ")";
-	}
-	
-	public String makeUpdateAnswerSQL(int targetNum) {
-		String SQL = "UPDATE SET " + targetNum + "_qus = ? WHERE pid = LAST_INSERT_ID()";
+		
 
+	
+	private String makeUpdateAnswerSQL(int targetNum) {
+		String SQL = "UPDATE research_result SET " + targetNum + "_qus = ? WHERE pid = LAST_INSERT_ID()";
+		return SQL;
 	}
 }

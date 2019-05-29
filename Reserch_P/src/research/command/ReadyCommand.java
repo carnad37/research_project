@@ -42,7 +42,7 @@ public class ReadyCommand implements ResearchCommand {
 	private String compareDate(String openDate, String closeDate) {
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
 		String nowDate = sdf.format(new Date());
-		String result = null;;
+		String result = null;
 		//년 검사-> 월검사 -> 일검사
 		int open = Integer.parseInt(openDate.replace("-",""));
 		int close = Integer.parseInt(closeDate.replace("-",""));

@@ -18,10 +18,12 @@
   a, button {font-weight: bold; margin-top:10px; text-decoration: none; color:white;  display: inline-block; box-sizing: border-box; text-align: center; border-radius: 10px; padding: 1px 4px 4px 1px; font-size: 20px;}
   a {background-color: rgb(218, 68, 68);width: 100px;}
   button {background-color: rgb(60, 167, 219); border:0; outline: 0; width:100px;}
-  button:hover {background-color: rgb(186, 232, 255); color: rgb(27, 160, 217);}
+  button:hover {background-color: rgb(186, 232, 255); color: rgb(27, 160, 217); cursor: Pointer;}
   a.pass:hover {background-color: rgba(218, 68, 68, 0.44); color: rgb(80, 12, 12);}
-  div.select {margin: 0 auto; width: 210px;}
-  a.stop {background-color: rgb(182, 182, 182);}  
+  div.select {margin: 0 auto; width: 320px;}
+  a.stop {background-color: rgb(182, 182, 182);} 
+  a.cancel {}
+  a.rollback {}
 </style>
 </head>
 <body>
@@ -59,17 +61,15 @@
 			<a class="pass" href="before.do?qCount=${qCount - 1}">이전</a>
 		</c:if>
 		<input type="hidden" name = "qCount" value = "${qCount}">
-
-		<button type="submit">
-			<c:choose>
-				<c:when test="${qCount == research.max_qnum}">
-					완료
-				</c:when>
-				<c:otherwise>
-					다음
-				</c:otherwise>
-			</c:choose>
-		</button>
+		<c:choose>
+			<c:when test="${qCount == research.max_qnum}">
+				<button type="submit">완료</button>			
+			</c:when>
+			<c:otherwise>
+				<button type="submit">다음</button>			
+			</c:otherwise>
+		</c:choose>
+		<a class="rollback" href="rollback.do">취소</a>
 		</div>
   </div>
   </form>

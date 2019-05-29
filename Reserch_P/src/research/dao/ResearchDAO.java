@@ -39,7 +39,6 @@ public class ResearchDAO {
 	
 	public void updateCommit(Connection conn) {
 		try {
-			conn = getConnection();
 			conn.commit();
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -50,7 +49,6 @@ public class ResearchDAO {
 	
 	public void updateRollback(Connection conn) {
 		try {
-			conn = getConnection();
 			conn.rollback();
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -58,6 +56,8 @@ public class ResearchDAO {
 			if (conn != null) try {conn.close();} catch (SQLException e) {}
 		}
 	}
+	
+	
 	
 	public int updateQAToDB(UnitQA unitQA, String SQL) {
 		int retval = 0;
@@ -219,14 +219,12 @@ public class ResearchDAO {
 		return conn;
 	}
 	
-	public void joinResearchAnswer(Connection conn, Person person, int target, ) {
+	public void joinResearchAnswer(Connection conn, int answer, String SQL) {
 		int retval = 0;
 		PreparedStatement pstmt = null;
-		String SQL = "UPDATE SET ";
 		try {
 			pstmt = conn.prepareStatement(SQL);
-			int[] questionArray = person.getAnswerArray();
-			pstmt.setInt(1, questionArray[target]);
+			pstmt.setInt(1, answer);
 			retval = pstmt.executeUpdate();
 			if (retval != 1) {
 				System.out.println("DB : answer update fail");
@@ -264,6 +262,29 @@ public class ResearchDAO {
 	
 	//=====================Query	
 		
+	public int getLastInsertID(Connection conn) {
+		String SQL = "SELECT LAST_INSERT_ID() AS last_id FROM research_result";
+		Statement stmt = null;
+		ResultSet rs = null;
+		int res = 0;
+		try {
+			stmt = conn.createStatement();
+			rs = stmt.executeQuery(SQL);
+			if (rs != null) {
+				while (rs.next()) {
+					res = rs.getInt("last_id");
+					System.out.println("last_id : " + res);
+				}
+			} else {
+				System.out.println("resultSet is null");
+			} 
+			
+		} catch (Exception e) {
+				// TODO: handle exception
+		}
+		return res;
+	}
+	
 	public int getResearchID() {
 		int researchID = 0;
 		String SQL = "SELECT MAX(RESEARCH_ID) AS MAX FROM RESEARCH_INFO";
