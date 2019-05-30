@@ -27,7 +27,7 @@ public class PersonInfoCommand implements ResearchCommand {
 		String job = request.getParameter("job");
 		String sex = request.getParameter("sex");
 		
-//조사대상자의 객체를 만든다.
+		//조사대상자의 객체를 만든다.
 		person = new Person();
 		person.setAnswerArray(research.getMax_qnum());
 		person.setAge(age);

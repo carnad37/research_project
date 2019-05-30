@@ -25,8 +25,15 @@ public class QuestionCommand implements ResearchCommand {
 			return viewPage;
 		}
 		String question = request.getParameter("QUESTION");
+		question = escapeChanger(question);
 		session.setAttribute("question", question);
 		session.setAttribute("max_anum", maxAnum);
 		return viewPage;
 	}
+	
+	private String escapeChanger(String preWord) {
+		String postWord = preWord.replace("\n", "&#92;n");
+		return postWord;
+	}
+
 }

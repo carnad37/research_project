@@ -40,6 +40,7 @@ public class AnswerCommand implements ResearchCommand {
 		for (int i = 1; i <= maxAnum; i++) {
 			String key = i + "_ans";
 			String unitAnswer = request.getParameter(key);
+			unitAnswer = escapeChanger(unitAnswer);
 			answer.add(unitAnswer);
 		}
 		
@@ -80,6 +81,11 @@ public class AnswerCommand implements ResearchCommand {
 		endSQL += ")";
 		System.out.println("insert answer SQL : " + startSQL + endSQL);
 		return startSQL + endSQL;
+	}
+	
+	private String escapeChanger(String preWord) {
+		String postWord = preWord.replace("\n", "&#92;n");
+		return postWord;
 	}
 	
 }

@@ -56,42 +56,42 @@ public class DataManager
 //		return dataBaseMap;
 //	}
 	
-//	public void saveAllResearchData(Map<String, Research> researchDB, String mainPath)
-//	{
-//		String subPath = "researchData.txt";
-//		String path = mainPath+subPath;
-//
-//		List<String> saveList = new ArrayList<String>();
-//		
-//		Set<String> titleSet = researchDB.keySet();		
-//		for(String title : titleSet)
-//		{
-//			Research research = researchDB.get(title);
-//			List<UnitQA> listQA = research.getListQA();
-//			if(listQA.isEmpty())
-//			{
-//				continue;
-//			}
-//			saveList.add(title);	//타이틀입력
-//
-//			int questionNumber = research.getQuestionNumber();
-//			for(int i=0;i<questionNumber;i++)
-//			{
-//				UnitQA unitQA = listQA.get(i);
-//				String question = unitQA.getQuestion();
-//				
-//				saveList.add(question);
-//				List<String> answer = unitQA.getAnswer();
-//				for(String unitAnswer : answer)
-//				{
-//					saveList.add(unitAnswer);
-//				}
-//				saveList.add("");
-//			}
-//		}				
-//		saveToTxt(saveList, path);	
-//	}
-//	
+	public void saveAllResearchData(Map<String, Research> researchDB, String mainPath)
+	{
+		String subPath = "researchData.txt";
+		String path = mainPath+subPath;
+
+		List<String> saveList = new ArrayList<String>();
+		
+		Set<String> titleSet = researchDB.keySet();		
+		for(String title : titleSet)
+		{
+			Research research = researchDB.get(title);
+			List<UnitQA> listQA = research.getListQA();
+			if(listQA.isEmpty())
+			{
+				continue;
+			}
+			saveList.add(title);	//타이틀입력
+
+			int questionNumber = research.getQuestionNumber();
+			for(int i=0;i<questionNumber;i++)
+			{
+				UnitQA unitQA = listQA.get(i);
+				String question = unitQA.getQuestion();
+				
+				saveList.add(question);
+				List<String> answer = unitQA.getAnswer();
+				for(String unitAnswer : answer)
+				{
+					saveList.add(unitAnswer);
+				}
+				saveList.add("");
+			}
+		}				
+		saveToTxt(saveList, path);	
+	}
+	
 	public void connectDB(Research research, int function) {
 		
 	}
@@ -236,50 +236,83 @@ public class DataManager
 //		return lineDBData;
 //	}	
 	
-//	public void setData(Map<String,Research> researchDB, String path)
-//	{
-//		String subPath = "researchData.txt";
-//		List<String> researchData = setFileData(path, subPath);
-//			
-//		int i = 0;
-//		for(i=0;i<researchData.size();i++)
-//		{
-//			String title = researchData.get(i);
-//			i++;
-//			
-//			Research research = researchDB.get(title);
-//			List<UnitQA> listQA = research.getListQA();
-//			
-//			int blankCount = 0;
-//			int questionNumber = research.getQuestionNumber();
-//			while (true)	//답변
-//			{
-//				String question = researchData.get(i);	//질문
-//				i++;
-//				
-//				List<String> answer = new ArrayList<String>();	//답변
-//				
-//				while (true)
-//				{
-//					String unitAnswer = researchData.get(i);
-//					i++;
-//					
-//					if(unitAnswer.equals(""))
-//					{
-//						blankCount++;
-//						break;
-//					}
-//					answer.add(unitAnswer);
-//				}				
-//				UnitQA unitQA = new UnitQA(question, answer);
-//				listQA.add(unitQA);
-//				
-//				if(blankCount==questionNumber)
-//				{
-//					i--;	//135에서 이미 ++해줬으므로 한번 빼준다.
-//					break;
-//				}
-//			}						
-//		}
-//	}
+	public void setData(List<String> backupData, String path)
+	{
+		String subPath = "researchData.txt";
+//		List<String> backupData = setFileData(path, subPath);
+		List<Research> researchList = new ArrayList<Research>();	
+		int i = 0;
+		for(i=0;i<backupData.size();i++)
+		{
+			Research research = null;
+			String start = backupData.get(i);
+			if (!start.equals("*****start*****")) {
+				System.out.println("backupFile start break");
+				break;
+			}
+			i++;
+			
+			String title = backupData.get(i);
+			i++;
+			String customer = backupData.get(i);
+			i++;
+			String subject = backupData.get(i);
+			i++;
+			int qNum = Integer.parseInt(backupData.get(i));
+			i++;
+			int aNum = Integer.parseInt(backupData.get(i));
+			i++;
+			String openDate = backupData.get(i);
+			i++;
+			String closeDate = backupData.get(i);
+			i++;
+			int register = Integer.parseInt(backupData.get(i));
+			i++;
+			
+			if (!backupData.get(i).equals("")) {
+				System.out.println("backupFile QA break");
+				break;
+			} else {
+				research = new Research(title, customer, subject, qNum, openDate, closeDate);
+				research.setMax_anum(aNum);
+				research.setRegister(register);
+				i++;
+			}
+			
+			List<UnitQA> listQA = research.getListQA();
+			
+			for (int j = 0; j < qNum; j++) {
+				String question = backupData.get(i);	//질문	
+				List<String> answer = new ArrayList<String>();	//답변
+				i++;
+
+				boolean loopFlag = true;
+				while (loopFlag)
+				{
+					String unitAnswer = backupData.get(i);
+					i++;
+					
+					if(unitAnswer.equals("")) {
+						loopFlag = false;
+					} else {
+						answer.add(unitAnswer);
+					}
+				}				
+				UnitQA unitQA = new UnitQA();
+				unitQA.setQuestion(question);
+				unitQA.setAnswer(answer);
+				listQA.add(unitQA);
+			}
+			//이 시점에서 DAO를 통해서, research를 update한다.
+			//그리고 해당 자료의 research_id값을 가져온다.
+			
+			//위에서 얻은 research_id값으로 답변들을 research_result테이블에 등록.
+			if (start.equals("*****result*****")) {
+				i++;
+				String result = backupData.get(i);
+				String[] resultArray = result.split(",");
+				//dao를 소 ㅡ 환
+			}
+		}
+	}
 }

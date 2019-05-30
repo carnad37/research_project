@@ -35,11 +35,6 @@ public class BackupCommand implements ResearchCommand {
 		return SQL;
 	}
 	
-	private String makePersonSQL(int research_id) {
-		String SQL = "SELECT * FROM research_" + research_id + "_result";
-		return SQL;
-	}
-	
 	private String makeUnionSQL(List<Research> researchList) {
 		String fSQL = "SELECT sex, age, job, 1_qus";
 		String mSQL = " FROM ";
