@@ -6,7 +6,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.naming.Context;
 import javax.naming.InitialContext;
@@ -428,6 +430,62 @@ public class ResearchDAO {
 		}
 		return listQA;
 	} 	
+	
+	public Map<Integer, List<Person>> getResultMap(String SQL) {
+		Connection conn = null;
+		Statement stmt = null;
+		ResultSet rs = null;
+		Map<Integer, List<Person>> resultMap = new HashMap<Integer, List<Person>>();
+//		int res = 0;
+		try {
+			conn = getConnection();
+			stmt = conn.createStatement();
+			rs = stmt.executeQuery(SQL);
+			if (rs != null) {
+				while (rs.next()) {
+					int researchID = rs.getInt("research_id");
+					Person person = new Person();
+					person.setAge(rs.getInt("age"));
+					person.setSex(rs.getString("sex"));
+					person.setJob(rs.getString("job"));
+					
+					int count = 0;
+					List<Integer> answerList = new ArrayList<Integer>();
+					while (true) {
+						int answer = rs.getInt((count + 1) + "_qus");
+						if (answer != 0) {
+							answerList.add(answer);
+						} else {
+							break;
+						}
+						count++;
+					}
+					count = 0;
+					person.setAnswerArray(answerList.size());
+					for (Integer integer : answerList) {
+						person.saveAnswerArray(count, integer);
+						count++;
+					}
+
+					if (resultMap.containsKey(researchID)) {
+						List<Person> personList = resultMap.get(researchID);
+						personList.add(person);
+					} else {
+						List<Person> personList = new ArrayList<Person>();
+						personList.add(person);
+						resultMap.put(researchID, personList);
+					}
+					
+				}
+			} else {
+				System.out.println("resultSet is null");
+			} 
+			
+		} catch (Exception e) {
+				// TODO: handle exception
+		}
+		return resultMap;
+	}
 	
 //	public List<Person> getResultList(String SQL) {
 //		

@@ -56,26 +56,27 @@ public class DataManager
 //		return dataBaseMap;
 //	}
 	
-	public void saveAllResearchData(Map<String, Research> researchDB, String mainPath)
+	public void saveAllResearchData(List<Research> researchList, Map<Integer, List<Person>> resultMap, String path)
 	{
-		String subPath = "researchData.txt";
-		String path = mainPath+subPath;
-
+//		String path = mainPath+subPath;		
+		
 		List<String> saveList = new ArrayList<String>();
 		
-		Set<String> titleSet = researchDB.keySet();		
-		for(String title : titleSet)
-		{
-			Research research = researchDB.get(title);
+		for (Research research : researchList) {
+			int researchID = research.getResearch_id();
+			saveList.add("*****start*****");
+			saveList.add(research.getTitle());
+			saveList.add(research.getCustomer());
+			saveList.add(research.getSubject());
+			saveList.add(String.valueOf(research.getMax_qnum()));
+			saveList.add(String.valueOf(research.getMax_anum()));
+			saveList.add(research.getOpendate());
+			saveList.add(research.getClosedate());
+			saveList.add(String.valueOf(research.getRegister()));
+			saveList.add("");
 			List<UnitQA> listQA = research.getListQA();
-			if(listQA.isEmpty())
-			{
-				continue;
-			}
-			saveList.add(title);	//타이틀입력
-
-			int questionNumber = research.getQuestionNumber();
-			for(int i=0;i<questionNumber;i++)
+			
+			for(int i=0;i<research.getMax_qnum();i++)
 			{
 				UnitQA unitQA = listQA.get(i);
 				String question = unitQA.getQuestion();
@@ -88,8 +89,53 @@ public class DataManager
 				}
 				saveList.add("");
 			}
-		}				
-		saveToTxt(saveList, path);	
+			
+			if (resultMap.containsKey(researchID)) {
+				saveList.add("*****result*****");
+				List<Person> resultList = resultMap.get(researchID);
+				for (Person person : resultList) {
+					String resultData = String.valueOf(person.getAge());
+					resultData += ", " + person.getSex();
+					resultData += ", " + person.getJob();
+					int[] answerArray = person.getAnswerArray();
+					for (int answer : answerArray) {
+						resultData += ", " + String.valueOf(answer);
+					}
+					saveList.add(resultData);
+				}
+				saveList.add("");
+			}
+		}
+
+		
+		
+//		Set<String> titleSet = researchDB.keySet();		
+//		for(String title : titleSet)
+//		{
+//			Research research = researchDB.get(title);
+//			List<UnitQA> listQA = research.getListQA();
+//			if(listQA.isEmpty())
+//			{
+//				continue;
+//			}
+//			saveList.add(title);	//타이틀입력
+//
+//			int questionNumber = research.getQuestionNumber();
+//			for(int i=0;i<questionNumber;i++)
+//			{
+//				UnitQA unitQA = listQA.get(i);
+//				String question = unitQA.getQuestion();
+//				
+//				saveList.add(question);
+//				List<String> answer = unitQA.getAnswer();
+//				for(String unitAnswer : answer)
+//				{
+//					saveList.add(unitAnswer);
+//				}
+//				saveList.add("");
+//			}
+//		}				
+//		saveToTxt(saveList, path);	
 	}
 	
 	public void connectDB(Research research, int function) {
