@@ -1,0 +1,34 @@
+*****start*****
+해산물의 위험성
+강원대학교
+공학
+3
+3
+2019-05-10
+2019-05-31
+0
+
+이번엔 잘될꺼임
+2
+
+이번엔 잘될꺼임
+정말로
+잘될...꺼임
+
+질문명이 머 어때서요
+답변은
+잘될...꺼임
+모르겠다
+
+*****result*****
+12, male, have_job, 1, 1
+12, male, have_job, 1, 1
+12, female, have_job, 1, 2
+12, female, have_job, 1, 2
+12, male, have_job, 1, 2
+12, female, have_job, 1, 2
+12, male, have_job, 1, 1
+12, female, have_job, 1, 1
+12, male, have_job, 1, 1
+12, male, have_job, 1, 1
+

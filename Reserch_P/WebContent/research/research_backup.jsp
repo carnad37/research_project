@@ -15,12 +15,17 @@
   tr, td {border-bottom: 1px solid black; border-top: 1px solid black; }
   td {padding: 2px 10px;}
   .title {font-size: 20px; font-weight: bold;}
+  button {cursor: pointer; font-weight: bold; background-color: red; outline: 0; border: 0;color:white; background-color: rgb(60, 167, 219); display: inline-block; width: 100%; height: 55px; box-sizing: border-box; text-align: center; border-radius: 10px; padding: 1px 4px 4px 1px; font-size: 20px;}
+  button:hover {background-color: rgb(186, 232, 255); color: rgb(27, 160, 217);}
+  .del_btn {width: 200px;}
+  .main_btn {margin-left: 20px; width: 100px;}
 </style>
 </head>
 <body>
   <header>
     <h1>DB 백업</h1>
   </header>
+  <div class="wrapper">
 	<table class="wrapper">
     <tr class="title">
       <td></td>
@@ -44,8 +49,10 @@
 		  <td>${research.closedate}</td>
 		</tr>
     </c:forEach>
-	<p><button class="del_btn" type="submit">선택 항목 삭제하기</button><button class="main_btn" type="button" onclick="location.href='main.do'">메인으로</button></p>
 	</form>
   </table>
+  <p><button class="del_btn" type="submit">선택 항목 백업하기</button><button class="main_btn" type="button" onclick="location.href='main.do'">메인으로</button></p>
+  
+  </div>
 </body>
 </html>

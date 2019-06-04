@@ -1,5 +1,6 @@
 package research.command;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -18,14 +19,31 @@ public class BackupCommand implements ResearchCommand {
 	public String execute(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 			String path = request.getServletContext().getRealPath("") + "backupData";		
-		
+			File file = new File(path);
+			if (!file.exists()) {
+				file.mkdirs();
+			}
+			path += File.separator;
+			System.out.println(path);
+
 			String[] checkArray = request.getParameterValues("check_id");
 			ResearchDAO dao = new ResearchDAO();
 			String tSQL = makeResearchSQL(checkArray);
+			System.out.println(tSQL);
 			List<Research> researchList = dao.getTargetResearch(tSQL);
-			String uSQL = makeResultSQL(researchList);
+			int maxAnswer = 0;
+			List<Integer> checkList = new ArrayList<Integer>();
+
+			for (Research research : researchList) {			
+				checkList.add(research.getResearch_id());
+				if (maxAnswer < research.getMax_qnum()) {
+					maxAnswer = research.getMax_qnum();
+				}
+			}
+			
+			String uSQL = makeResultSQL(maxAnswer, checkList);
 			DataManager dm = new DataManager();
-			dm.saveAllResearchData(researchList, dao.getResultMap(uSQL), path);
+			dm.saveAllResearchData(researchList, dao.getResultMap(uSQL, maxAnswer), path);
 			return null;
 	}
 	
@@ -37,15 +55,8 @@ public class BackupCommand implements ResearchCommand {
 		return SQL;
 	}
 	
-	private String makeResultSQL(List<Research> researchList) {
-		List<Integer> checkList = new ArrayList<Integer>();
-		int maxAnswer = 0;
-		for (Research research : researchList) {			
-			checkList.add(research.getResearch_id());
-			if (maxAnswer < research.getMax_qnum()) {
-				maxAnswer = research.getMax_qnum();
-			}
-		}
+	private String makeResultSQL(int maxAnswer, List<Integer> checkList) {
+
 		
 		String SQL = "SELECT research_id, sex, age, job";
 		for (int i = 0; i < maxAnswer; i++) {
@@ -56,6 +67,7 @@ public class BackupCommand implements ResearchCommand {
 		for (int i = 1; i < checkList.size(); i++) {
 			SQL += " OR research_id = " + checkList.get(i);
 		}
+		System.out.println("result SQL" + SQL);
 		return SQL;
 	}
 	

@@ -1,7 +1,8 @@
 package research.front;
 
 import java.io.IOException;
-
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -60,7 +61,8 @@ public class ResearchFrontConn extends HttpServlet {
 		String action = uri.substring(start + 1);
 		System.out.println(action);
 		ResearchCommand command = null;
-		String viewPage = null;
+		String viewPage = null;		
+		
 		if (action.equals("main.do")) {
 			viewPage = "research_main.jsp";
 			

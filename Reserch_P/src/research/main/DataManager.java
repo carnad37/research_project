@@ -5,12 +5,16 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.StringTokenizer;
+
+import research.dao.ResearchDAO;
 
 public class DataManager
 {
@@ -58,10 +62,10 @@ public class DataManager
 	
 	public void saveAllResearchData(List<Research> researchList, Map<Integer, List<Person>> resultMap, String path)
 	{
-//		String path = mainPath+subPath;		
-		
+//		String path = mainPath+subPath;
+		String dateData = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss"));
 		List<String> saveList = new ArrayList<String>();
-		
+		String savePath = path + "backup_" + dateData + ".txt";
 		for (Research research : researchList) {
 			int researchID = research.getResearch_id();
 			saveList.add("*****start*****");
@@ -106,7 +110,9 @@ public class DataManager
 				saveList.add("");
 			}
 		}
-
+		System.out.println(saveList);
+		FileWrite fw = new FileWrite();
+		fw.writeSystem(saveList, savePath);
 		
 		
 //		Set<String> titleSet = researchDB.keySet();		
@@ -282,11 +288,14 @@ public class DataManager
 //		return lineDBData;
 //	}	
 	
-	public void setData(List<String> backupData, String path)
+	public void setData()
 	{
-		String subPath = "researchData.txt";
+		String path = "D:\\HHS\\git_researchP\\Reserch_P\\WebContent\\backupData\\backup_20190603104134.txt";
+		FileOpen fo = new FileOpen();
+		List<String> backupData = fo.openSystem(path);
+		ResearchDAO dao = new ResearchDAO();
 //		List<String> backupData = setFileData(path, subPath);
-		List<Research> researchList = new ArrayList<Research>();	
+//		List<Research> researchList = new ArrayList<Research>();	
 		int i = 0;
 		for(i=0;i<backupData.size();i++)
 		{
@@ -324,6 +333,9 @@ public class DataManager
 				research.setRegister(register);
 				i++;
 			}
+			Connection conn = dao.insertBackup(research);
+			int last_id = dao.getLastInsertID(conn);
+			dao.updateCommit(conn);
 			
 			List<UnitQA> listQA = research.getListQA();
 			
@@ -332,14 +344,14 @@ public class DataManager
 				List<String> answer = new ArrayList<String>();	//답변
 				i++;
 
-				boolean loopFlag = true;
-				while (loopFlag)
+				int qusCount = 0;
+				while (qusCount < qNum)
 				{
 					String unitAnswer = backupData.get(i);
 					i++;
 					
 					if(unitAnswer.equals("")) {
-						loopFlag = false;
+						qusCount++;
 					} else {
 						answer.add(unitAnswer);
 					}
@@ -351,14 +363,55 @@ public class DataManager
 			}
 			//이 시점에서 DAO를 통해서, research를 update한다.
 			//그리고 해당 자료의 research_id값을 가져온다.
-			
 			//위에서 얻은 research_id값으로 답변들을 research_result테이블에 등록.
+			String SQL = makeCreateTableSQL(last_id);
+			dao.createTableToDB(SQL);
+			i++;
+			start = backupData.get(i);
+			List<String[]> resultList = new ArrayList<String[]>();
 			if (start.equals("*****result*****")) {
+				while(true) {
+					i++;
+					String result = backupData.get(i);
+					if (result.equals("")) {
+						break;
+					}
+					String[] resultArray = result.split(",");
+					resultList.add(resultArray);
+					//dao를 소 ㅡ 환
+				}
+				SQL = makeResultDataSQL(last_id, qNum, resultList.size());
+				System.out.println("result SQL : " + SQL);
 				i++;
-				String result = backupData.get(i);
-				String[] resultArray = result.split(",");
-				//dao를 소 ㅡ 환
 			}
 		}
+	}
+	
+	private String makeResultDataSQL(int research_id, int qNum, int arrayLength) {
+		String SQL = "INSERT INTO research_result" + "(research_id, age, sex, job";
+		for (int i = 1; i <= qNum; i++) {
+			SQL += ", " + i + "_qus";
+		}
+		SQL += ") VALUES ";
+		for (int i = 0; i < arrayLength; i++) {
+			SQL += "( " + research_id + ", ?, ?, ?";
+			for (int j = 1; j <= qNum; j++) {
+				SQL += ", " + j + "_qus";
+			}
+			SQL += ")";
+			if (i != arrayLength - 1) {
+				SQL +=",";
+			}
+		}
+		return SQL;
+	}
+	
+	
+	private String makeCreateTableSQL(int research_id) {
+		String SQL = "create table " + "research_" + research_id + " ( qid int(3) primary key Auto_increment, question varchar(100) not null, 1_ans varchar(50) null";
+		for (int i = 1; i < 100; i++) {
+			SQL += ", " + (i + 1) + "_ans VARCHAR(50) NULL";
+		}
+		return SQL + ")";
 	}
 }

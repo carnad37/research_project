@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.naming.Context;
 import javax.naming.InitialContext;
@@ -37,7 +38,30 @@ public class ResearchDAO {
 		return connection;
 	}
 	
-	//=====================Update
+	/****
+	**=====================Update	
+	*/	
+	
+	public void updateBackupResult(List<String[]> resultList, String SQL) {
+		Connection conn = null;
+		PreparedStatement pstmt = null;
+		try {
+			conn = getConnection();
+			pstmt = conn.prepareStatement(SQL);
+			for (String[] result : resultList) {
+				int age = Integer.parseInt(result[0]);
+				String sex = result[1];
+				String job = result[2];
+				
+			}
+		} catch (Exception e){
+
+		} finally {
+			if (pstmt != null) try {pstmt.close();} catch (SQLException e) {}
+			if (conn != null) try {conn.close();} catch (SQLException e) {}
+		}
+	}
+	
 	
 	public void updateCommit(Connection conn) {
 		try {
@@ -188,6 +212,39 @@ public class ResearchDAO {
 		}
 		return retval;
 	}
+	
+	public Connection insertBackup(Research research) {
+		int retval = 0;
+		Connection conn = null;
+		PreparedStatement pstmt = null;
+		String SQL = null;
+		try {
+			conn = getConnection();
+			SQL = "insert into research_info(title, customer, subject, question_number, answer_number, open_date, close_date, register) values( ?, ?, ?, ?, ?, ?, ?, 1)";
+			pstmt = conn.prepareStatement(SQL);
+			pstmt.setString(1, research.getTitle());
+			pstmt.setString(2, research.getCustomer());
+			pstmt.setString(3, research.getSubject());
+			pstmt.setInt(4, research.getMax_qnum());
+			System.out.println("µî·Ï : " + research.getMax_anum());
+			pstmt.setInt(5, research.getMax_anum());
+			pstmt.setString(6, research.getOpendate());
+			pstmt.setString(7, research.getClosedate());
+			retval = pstmt.executeUpdate();
+			if (retval != 1) {
+				conn.rollback();
+				System.out.println("DB : rollback");
+			} else {
+				conn.commit();
+				System.out.println("DB : commit");
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			if (pstmt != null) try {pstmt.close();} catch (SQLException e) {}
+		}
+		return conn;
+	}
 
 	public Connection joinResearch(Person person, String SQL) {
 		int retval = 0;
@@ -262,8 +319,10 @@ public class ResearchDAO {
 //		return retval;
 //	}
 	
-	//=====================Query	
-		
+	/****
+	**=====================Query	
+	*/
+	
 	public int getLastInsertID(Connection conn) {
 		String SQL = "SELECT LAST_INSERT_ID() AS last_id FROM research_result";
 		Statement stmt = null;
@@ -379,6 +438,8 @@ public class ResearchDAO {
 					research.setMax_anum(rs.getInt("ANSWER_NUMBER"));
 					research.setRegister(rs.getInt("REGISTER"));
 					research.setResearch_id(rs.getInt("RESEARCH_ID"));
+					
+					research.setListQA(getListQA(rs.getInt("RESEARCH_ID"), rs.getInt("ANSWER_NUMBER")));
 					researchList.add(research);
 				}
 			}
@@ -431,7 +492,7 @@ public class ResearchDAO {
 		return listQA;
 	} 	
 	
-	public Map<Integer, List<Person>> getResultMap(String SQL) {
+	public Map<Integer, List<Person>> getResultMap(String SQL, int maxAnswer) {
 		Connection conn = null;
 		Statement stmt = null;
 		ResultSet rs = null;
@@ -448,25 +509,26 @@ public class ResearchDAO {
 					person.setAge(rs.getInt("age"));
 					person.setSex(rs.getString("sex"));
 					person.setJob(rs.getString("job"));
-					
-					int count = 0;
+					int count = 1;
 					List<Integer> answerList = new ArrayList<Integer>();
-					while (true) {
-						int answer = rs.getInt((count + 1) + "_qus");
-						if (answer != 0) {
-							answerList.add(answer);
-						} else {
-							break;
+					boolean breakPoint = true;
+					while (breakPoint) {
+						int target = count;
+						int answer = rs.getInt(target + "_qus");
+						answerList.add(answer);
+
+						if (count >= maxAnswer) {
+							breakPoint = false;
 						}
 						count++;
 					}
 					count = 0;
+
 					person.setAnswerArray(answerList.size());
 					for (Integer integer : answerList) {
 						person.saveAnswerArray(count, integer);
 						count++;
 					}
-
 					if (resultMap.containsKey(researchID)) {
 						List<Person> personList = resultMap.get(researchID);
 						personList.add(person);
@@ -474,8 +536,7 @@ public class ResearchDAO {
 						List<Person> personList = new ArrayList<Person>();
 						personList.add(person);
 						resultMap.put(researchID, personList);
-					}
-					
+					}					
 				}
 			} else {
 				System.out.println("resultSet is null");
@@ -484,6 +545,12 @@ public class ResearchDAO {
 		} catch (Exception e) {
 				// TODO: handle exception
 		}
+		Set<Integer> key = resultMap.keySet();
+		System.out.println("key : " + key);
+		for (Integer intData : key) {
+			List<Person> person = resultMap.get(intData);
+			System.out.println("person size : " + person.size());
+		}	
 		return resultMap;
 	}
 	

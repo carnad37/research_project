@@ -18,7 +18,8 @@
   .title {font-size: 20px; font-weight: bold;}
   button {cursor: pointer; font-weight: bold; background-color: red; outline: 0; border: 0;color:white; background-color: rgb(60, 167, 219); display: inline-block; width: 100%; height: 55px; box-sizing: border-box; text-align: center; border-radius: 10px; padding: 1px 4px 4px 1px; font-size: 20px;}
   button:hover {background-color: rgb(186, 232, 255); color: rgb(27, 160, 217);}
-  .del_btn {width: 200px;}
+  .del_btn {background-color: rgb(218, 68, 68); width: 200px;}
+  .del_btn:hover {background-color: rgba(218, 68, 68, 0.44); color: rgb(80, 12, 12);}
   .main_btn {margin-left: 20px; width: 100px;}
 </style>
 </head>
