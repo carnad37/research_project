@@ -55,9 +55,7 @@ public class BackupCommand implements ResearchCommand {
 		return SQL;
 	}
 	
-	private String makeResultSQL(int maxAnswer, List<Integer> checkList) {
-
-		
+	private String makeResultSQL(int maxAnswer, List<Integer> checkList) {		
 		String SQL = "SELECT research_id, sex, age, job";
 		for (int i = 0; i < maxAnswer; i++) {
 			SQL += ", " + (i + 1) + "_qus"; 

@@ -1,7 +1,7 @@
 package research.front;
 
 import java.io.IOException;
-import java.util.HashMap;
+import java.util.Hashtable;
 import java.util.Map;
 
 import javax.servlet.ServletException;
@@ -32,11 +32,16 @@ public class ResearchFrontConn extends HttpServlet {
 	private static final long serialVersionUID = 1L;
     private static final boolean BEFORE = false;
     private static final boolean NEXT = true;
+//	private Map<String, ResearchCommand> commandMap = null;
+
     /**
      * @see HttpServlet#HttpServlet()
      */
     public ResearchFrontConn() {
         super();
+//        if (commandMap == null) {
+//        	commandMap = new Hashtable<String, ResearchCommand>();
+//		}
         // TODO Auto-generated constructor stub
     }
 
@@ -50,10 +55,21 @@ public class ResearchFrontConn extends HttpServlet {
 	/**
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */
-	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		actionDo(request, response);
-	}
-
+//	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+//		actionDo(request, response);
+//	}
+//
+//		
+//	protected void actionDo(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+//		request.setCharacterEncoding("UTF-8");
+//		String uri = request.getRequestURI();
+//		int start = uri.lastIndexOf("/");
+//		String action = uri.substring(start + 1);
+//		System.out.println(action);
+//		ResearchCommand command = null;
+//		String viewPage = null;	
+//	}
+	
 	protected void actionDo(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		request.setCharacterEncoding("UTF-8");
 		String uri = request.getRequestURI();
@@ -64,8 +80,7 @@ public class ResearchFrontConn extends HttpServlet {
 		String viewPage = null;		
 		
 		if (action.equals("main.do")) {
-			viewPage = "research_main.jsp";
-			
+			viewPage = "research_main.jsp";			
 		} else if (action.equals("create_view.do")) {
 			viewPage = "research_create.jsp";
 		} else if (action.equals("create.do")) {

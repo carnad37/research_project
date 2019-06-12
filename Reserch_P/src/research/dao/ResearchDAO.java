@@ -37,7 +37,7 @@ public class ResearchDAO {
 		}
 		return connection;
 	}
-	
+
 	/****
 	**=====================Update	
 	*/	
@@ -553,7 +553,12 @@ public class ResearchDAO {
 		}	
 		return resultMap;
 	}
+	/****
+	**=====================Query_Chart(JSON)	
+	*/	
 	
+	
+		
 //	public List<Person> getResultList(String SQL) {
 //		
 //	}
